@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "This is the API for application views-tools.",
   "main": "index.js",
+  "engines": {
+    "node": "18.18.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/index.js",
-    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts"
+    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Joao Pedro Sousa e Silva",
   "license": "ISC",
