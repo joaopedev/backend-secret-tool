@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 
 export = (app: Application) => {
   app.post(
-    "/enviar-email",
+    "private/enviar-email",
     async (req: Request, res: Response, next: NextFunction) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
