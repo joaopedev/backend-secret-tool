@@ -3,12 +3,14 @@ import createError from "http-errors";
 import helmet from "helmet";
 import cors from "cors";
 import { HTTP_ERRORS } from "./models/model";
-require("dotenv").config();
 const consign = require("consign");
+require("dotenv").config();
+
+const AUTHORIZATION = process.env.AUTHORIZATION;
+
+//Tratando exceções do Node
 
 const app = express();
-const port = process.env.PORT || 3000;
-const AUTHORIZATION = process.env.AUTHORIZATION;
 
 app.use(helmet());
 app.use(cors());
@@ -37,6 +39,6 @@ app.use((error: any, req: Request, res: Response, next: NextFunction) => {
   res.json({ message: error.message });
 });
 
-app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+const server = app.listen(Number(process.env.PORT), () => {
+  console.log(`Servidor rodando na porta ${process.env.PORT}`);
 });
