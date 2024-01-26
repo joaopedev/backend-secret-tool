@@ -78,4 +78,24 @@ export = (app: Application) => {
       return res.status(500).json({ message: "Erro interno do servidor." });
     }
   });
+  app.post("/add-balance-video", async (req, res) => {
+    try {
+      const { email, balance } = req.body;
+  
+      if (!email || balance === undefined || isNaN(balance)) {
+        return res.status(400).json({ message: 'Campos inválidos.' });
+      }
+  
+      const success = await Usuario.addBonusByEmail(email, balance);
+  
+      if (success) {
+        return res.status(200).json({ message: "Balance adicionado com sucesso!" });
+      } else {
+        return res.status(404).json({ message: "Usuário não encontrado." });
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar balance:", error);
+      return res.status(500).json({ message: "Erro interno do servidor." });
+    }
+  });
 };
