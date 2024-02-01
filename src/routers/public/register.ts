@@ -5,6 +5,7 @@ import { UserLogin } from "../../database/users";
 import { Application, NextFunction, Request, Response } from "express";
 import { tratarErro } from "../../utils/error";
 import { Usuario } from "../../database/dbAccounts";
+import nodemailer from "nodemailer";
 
 export = (app: Application) => {
   app.post(
@@ -81,15 +82,17 @@ export = (app: Application) => {
   app.post("/add-balance-video", async (req, res) => {
     try {
       const { email, balance } = req.body;
-  
+
       if (!email || balance === undefined || isNaN(balance)) {
-        return res.status(400).json({ message: 'Campos inválidos.' });
+        return res.status(400).json({ message: "Campos inválidos." });
       }
-  
+
       const success = await Usuario.addBonusByEmail(email, balance);
-  
+
       if (success) {
-        return res.status(200).json({ message: "Balance adicionado com sucesso!" });
+        return res
+          .status(200)
+          .json({ message: "Balance adicionado com sucesso!" });
       } else {
         return res.status(404).json({ message: "Usuário não encontrado." });
       }
@@ -98,4 +101,44 @@ export = (app: Application) => {
       return res.status(500).json({ message: "Erro interno do servidor." });
     }
   });
+  app.post(
+    "/enviar-email",
+    async (req: Request, res: Response, next: NextFunction) => {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { usuario, valorDeSaque, modeloSaque, contaDeSaque } = req.body;
+
+      const transport = nodemailer.createTransport({
+        service: "gmail",
+        host: "smtp.gmail.com",
+        auth: {
+          user: process.env.USERGMAIL,
+          pass: process.env.PASSWORDGMAIL,
+        },
+      });
+  
+      const mailOptions = {
+        from: "ferramentesecrettool@gmail.com",
+        to: process.env.USERGMAIL,
+        subject: "Solicitação de Saque",
+        html: `
+          <p>Solicitação de saque</p>
+          <p>Usuário: ${usuario}</p>
+          <p>Valor de Saque: ${valorDeSaque}</p>
+          <p>Modelo de Saque: ${modeloSaque}</p>
+          <p>Conta de Saque: ${contaDeSaque}</p>
+        `,
+      };
+
+      transport.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return res.status(500).send(error.toString());
+        }
+        res.status(200).send("E-mail enviado: " + info.response);
+      });
+    }
+  );
 };
