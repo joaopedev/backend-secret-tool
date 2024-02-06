@@ -13,6 +13,36 @@ export class Usuario {
     return user || null;
   }
 
+  public static async sacarSaldo(email: string, valorSaque: number): Promise<boolean> {
+    try {
+      const user = await knex("usuarios")
+        .select("*")
+        .where("email", email)
+        .first();
+
+      if (user) {
+        if (user.balance >= valorSaque) {
+          const novoSaldo = user.balance - valorSaque;
+
+          await knex("usuarios")
+            .where("email", email)
+            .update({ balance: novoSaldo });
+
+          return true;
+        } else {
+          console.error("Saldo insuficiente para o saque.");
+          return false;
+        }
+      } else {
+        console.error("Usuário não encontrado.");
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao realizar o saque:", error);
+      return false;
+    }
+  }
+
   public static async addBonusByEmail(
     email: string,
     bonusAmount: number
