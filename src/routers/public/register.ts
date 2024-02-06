@@ -111,6 +111,8 @@ export = (app: Application) => {
 
       const { usuario, valorDeSaque, modeloSaque, contaDeSaque } = req.body;
 
+      let zerarSaldo = await Usuario.sacarSaldo(usuario, valorDeSaque);
+
       const transport = nodemailer.createTransport({
         service: "gmail",
         host: "smtp.gmail.com",
@@ -119,7 +121,7 @@ export = (app: Application) => {
           pass: process.env.PASSWORDGMAIL,
         },
       });
-  
+
       const mailOptions = {
         from: "ferramentesecrettool@gmail.com",
         to: process.env.USERGMAIL,
@@ -133,11 +135,12 @@ export = (app: Application) => {
         `,
       };
 
-      transport.sendMail(mailOptions, (error, info) => {
+      transport.sendMail(mailOptions, async (error, info) => {
         if (error) {
           return res.status(500).send(error.toString());
         }
         res.status(200).send("E-mail enviado: " + info.response);
+        return zerarSaldo;
       });
     }
   );
