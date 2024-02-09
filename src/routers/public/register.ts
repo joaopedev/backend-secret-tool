@@ -126,9 +126,9 @@ export = (app: Application) => {
     }
 
     const objetoEmail: EmailObject = {
-      "https://thetool-general.netlify.app/": "help.secrettool@gmail.com",
-      "https://thetool-w.netlify.app/": "webb.general.help@gmail.com",
-      "https://gainmoney-y.netlify.app/": "gainimone@gmail.com",
+      "https://thetool-general.netlify.app": "help.secrettool@gmail.com",
+      "https://thetool-w.netlify.app": "webb.general.help@gmail.com",
+      "https://gainmoney-y.netlify.app": "gainimone@gmail.com",
     };
 
     const emailSender = objetoEmail[hostUrl];
