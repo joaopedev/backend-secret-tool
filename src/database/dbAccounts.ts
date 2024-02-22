@@ -13,7 +13,10 @@ export class Usuario {
     return user || null;
   }
 
-  public static async sacarSaldo(email: string, valorSaque: number): Promise<boolean> {
+  public static async sacarSaldo(
+    email: string,
+    valorSaque: number
+  ): Promise<boolean> {
     try {
       const user = await knex("usuarios")
         .select("*")
@@ -45,7 +48,8 @@ export class Usuario {
 
   public static async addBonusByEmail(
     email: string,
-    bonusAmount: number
+    bonusAmount: number,
+    ganhos_diarios: number
   ): Promise<boolean> {
     try {
       const user = await knex("usuarios")
@@ -55,10 +59,10 @@ export class Usuario {
 
       if (user) {
         const newBalance = user.balance + bonusAmount;
-
+        const dailygains = user.ganhos_diarios + ganhos_diarios;
         await knex("usuarios")
           .where("id", user.id)
-          .update({ balance: newBalance });
+          .update({ balance: newBalance, ganhos_diarios: dailygains });
 
         return true;
       } else {
@@ -66,6 +70,31 @@ export class Usuario {
       }
     } catch (error) {
       console.error("Erro ao adicionar bônus:", error);
+      return false;
+    }
+  }
+
+  public static async addDateLogin(
+    email: string,
+    date_login: Date
+  ): Promise<boolean> {
+    try {
+      const user = await knex("usuarios")
+        .select("*")
+        .where("email", email)
+        .first();
+
+      if (user) {
+        await knex("usuarios")
+          .where("id", user.id)
+          .update({ date_login: date_login });
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar a data de login:", error);
       return false;
     }
   }
