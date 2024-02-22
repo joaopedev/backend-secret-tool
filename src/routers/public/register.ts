@@ -54,40 +54,19 @@ export = (app: Application) => {
         });
     }
   );
-
-  app.post("/add-bonus", async (req: Request, res: Response) => {
-    try {
-      const { email } = req.body;
-
-      if (!email) {
-        return res
-          .status(400)
-          .json({ message: 'O campo "email" é obrigatório.' });
-      }
-
-      const success = await Usuario.addBonusByEmail(email, 40);
-
-      if (success) {
-        return res
-          .status(200)
-          .json({ message: "Bônus adicionado com sucesso!" });
-      } else {
-        return res.status(404).json({ message: "Usuário não encontrado." });
-      }
-    } catch (error) {
-      console.error("Erro ao adicionar bônus:", error);
-      return res.status(500).json({ message: "Erro interno do servidor." });
-    }
-  });
   app.post("/add-balance-video", async (req: Request, res: Response) => {
     try {
-      const { email, balance } = req.body;
+      const { email, balance, ganhos_diarios } = req.body;
 
       if (!email || balance === undefined || isNaN(balance)) {
         return res.status(400).json({ message: "Campos inválidos." });
       }
 
-      const success = await Usuario.addBonusByEmail(email, balance);
+      const success = await Usuario.addBonusByEmail(
+        email,
+        balance,
+        ganhos_diarios
+      );
 
       if (success) {
         return res
