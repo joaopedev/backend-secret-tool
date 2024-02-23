@@ -81,6 +81,28 @@ export = (app: Application) => {
       return res.status(500).json({ message: "Erro interno do servidor." });
     }
   });
+  app.post("/clear-user-data", async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ message: "Campo de email inválido." });
+      }
+
+      const success = await Usuario.clearUserData(email);
+
+      if (success) {
+        return res
+          .status(200)
+          .json({ message: "Dados do usuário limpos com sucesso!" });
+      } else {
+        return res.status(404).json({ message: "Usuário não encontrado." });
+      }
+    } catch (error) {
+      console.error("Erro ao limpar dados do usuário:", error);
+      return res.status(500).json({ message: "Erro interno do servidor." });
+    }
+  });
   app.post("/enviar-email", async (req: Request, res: Response) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

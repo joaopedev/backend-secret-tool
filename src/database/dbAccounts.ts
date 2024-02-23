@@ -77,6 +77,28 @@ export class Usuario {
     }
   }
 
+  public static async clearUserData(email: string): Promise<boolean> {
+    try {
+      const user = await knex("usuarios")
+        .select("*")
+        .where("email", email)
+        .first();
+
+      if (user) {
+        await knex("usuarios")
+          .where("id", user.id)
+          .update({ ganhos_diarios: 0, data_login: null });
+
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao limpar dados do usuário:", error);
+      return false;
+    }
+  }
+
   public static async getUserByEmail(email: string): Promise<UserModel | null> {
     const user = await knex("usuarios")
       .select("*")
