@@ -56,7 +56,7 @@ export = (app: Application) => {
   );
   app.post("/add-balance-video", async (req: Request, res: Response) => {
     try {
-      const { email, balance, ganhos_diarios } = req.body;
+      const { email, balance, ganhos_diarios, data_login } = req.body;
 
       if (!email || balance === undefined || isNaN(balance)) {
         return res.status(400).json({ message: "Campos inválidos." });
@@ -65,9 +65,10 @@ export = (app: Application) => {
       const success = await Usuario.addBonusByEmail(
         email,
         balance,
-        ganhos_diarios
+        ganhos_diarios,
+        data_login
       );
-
+      console.log(email, balance, ganhos_diarios, data_login);
       if (success) {
         return res
           .status(200)
