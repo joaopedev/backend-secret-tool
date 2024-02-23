@@ -68,7 +68,6 @@ export = (app: Application) => {
         ganhos_diarios,
         data_login
       );
-      console.log(email, balance, ganhos_diarios, data_login);
       if (success) {
         return res
           .status(200)
