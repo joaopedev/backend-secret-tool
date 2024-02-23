@@ -49,7 +49,8 @@ export class Usuario {
   public static async addBonusByEmail(
     email: string,
     bonusAmount: number,
-    ganhos_diarios: number
+    ganhos_diarios: number,
+    date_login: Date
   ): Promise<boolean> {
     try {
       const user = await knex("usuarios")
@@ -60,9 +61,11 @@ export class Usuario {
       if (user) {
         const newBalance = user.balance + bonusAmount;
         const dailygains = user.ganhos_diarios + ganhos_diarios;
-        await knex("usuarios")
-          .where("id", user.id)
-          .update({ balance: newBalance, ganhos_diarios: dailygains });
+        await knex("usuarios").where("id", user.id).update({
+          balance: newBalance,
+          ganhos_diarios: dailygains,
+          data_login: date_login,
+        });
 
         return true;
       } else {
@@ -74,10 +77,7 @@ export class Usuario {
     }
   }
 
-  public static async addDateLogin(
-    email: string,
-    date_login: Date
-  ): Promise<boolean> {
+  public static async clearUserData(email: string): Promise<boolean> {
     try {
       const user = await knex("usuarios")
         .select("*")
@@ -87,14 +87,14 @@ export class Usuario {
       if (user) {
         await knex("usuarios")
           .where("id", user.id)
-          .update({ date_login: date_login });
+          .update({ ganhos_diarios: 0, data_login: null });
 
         return true;
       } else {
         return false;
       }
     } catch (error) {
-      console.error("Erro ao atualizar a data de login:", error);
+      console.error("Erro ao limpar dados do usuário:", error);
       return false;
     }
   }
