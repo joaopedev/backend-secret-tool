@@ -90,7 +90,6 @@ export = (app: Application) => {
       }
 
       const success = await Usuario.clearUserData(email);
-
       if (success) {
         return res
           .status(200)
